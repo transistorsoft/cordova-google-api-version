@@ -1,0 +1,25 @@
+repositories{    
+  // Google APIs 11.2.* are now hosted at Maven
+  maven {
+    url 'https://maven.google.com'
+  }
+}
+
+// Enter your desired play-services version for all dependencies
+def GOOGLE_API_VERSION = '11.0.1'
+
+// List of play-services libs to search for.
+def GOOGLE_APIS = [
+    'com.google.android.gms',
+    'com.google.firebase'
+]
+
+println("+-----------------------------------------------------------------");
+println("| cordova-google-api-version: " + GOOGLE_API_VERSION);
+println("+-----------------------------------------------------------------");
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group in GOOGLE_APIS) { details.useVersion GOOGLE_API_VERSION }
+    }
+}

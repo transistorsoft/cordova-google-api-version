@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="cordova-android-play-services-gradle-release"
-        version="0.0.2">
+        id="cordova-google-api-version"
+        version="0.0.1">
 
-    <name>cordova-android-play-services-gradle-release</name>
-    <description>Cordova/Phonegap plugin to align various versions of the Play Services library specified by other plugins to the latest release version</description>
-    <author>Dave Alden</author>
+    <name>cordova-google-api-version</name>
+    <description>Cordova/Phonegap plugin to pin a desired version for all Google APIs (eg: play-services, firebase)</description>
+    <author>Chris Scott, Transistor Software</author>
 
     <platform name="android">
-        <framework src="cordova-android-play-services-gradle-release.gradle" custom="true" type="gradleReference" />
+    	<hook type="before_prepare" src="scripts/before-prepare.js" />
+    	<preference name="GOOGLE_API_VERSION" default="11.0.1" />
+        <framework src="cordova-google-api-version.gradle" custom="true" type="gradleReference" />
     </platform>
-
 </plugin>

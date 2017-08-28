@@ -6,7 +6,7 @@ repositories{
 }
 
 // Enter your desired play-services version for all dependencies
-def GOOGLE_API_VERSION = '11.0.1'
+def GOOGLE_API_VERSION = '11.2.0'
 
 // List of play-services libs to search for.
 def GOOGLE_APIS = [

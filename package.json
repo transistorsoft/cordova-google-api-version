@@ -1,7 +1,7 @@
 {
   "name": "cordova-google-api-version",
   "version": "0.0.1",
-  "description": "Cordova/Phonegap plugin to pin a desired version for all Google APIs (eg: play-services, firebase)",
+  "description": "Cordova plugin to solve Google API version conflicts by pining a desired version for all Google APIs (eg: play-services, firebase)",
   "author": "Chris Scott, Transistor Software",
   "license": "MIT",
   "dependencies": {

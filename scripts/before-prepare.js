@@ -1,17 +1,13 @@
-var fs = require ('fs');
-var path = require('path');
-var glob = require("glob")
-var parser = require('xml2js');
+var fs      = require ('fs');
+var path    = require('path');
+var parser  = require('xml2js');
 
-const PLUGIN_NAME = "cordova-google-api-version";
-const GRADLE_FILENAME = path.resolve(process.cwd(), 'platforms', 'android', PLUGIN_NAME, '*.gradle');
-
-//var sourcePath = path.resolve(__dirname, 'build-extras.gradle');
-var configFilePath = path.resolve(process.cwd(), 'config.xml');
-var destPath = 
+const PLUGIN_NAME         = "cordova-google-api-version";
+const GRADLE_FILENAME     = path.resolve(process.cwd(), 'platforms', 'android', PLUGIN_NAME, 'properties.gradle');
+const PROPERTIES_TEMPLATE = 'ext {GOOGLE_API_VERSION = "<VERSION>"}'
 
 // 1. Parse cordova.xml file and fetch this plugin's <variable name="GOOGLE_API_VERSION" />
-fs.readFile(configFilePath, function(err, data) {
+fs.readFile(path.resolve(process.cwd(), 'config.xml'), function(err, data) {
   var json = parser.parseString(data, function(err, result) {
     if (err) {
       return console.log(PLUGIN_NAME, " ERROR: ", err);
@@ -23,9 +19,8 @@ fs.readFile(configFilePath, function(err, data) {
         if (!plugin.variable.length) { 
           return console.log(PLUGIN_NAME, ' ERROR: FAILED TO FIND <variable name="GOOGLE_API_VERSION" /> in config.xml');
         }
-        var googleApiVersion = plugin.variable.pop().$.value;
         // 2.  Update .gradle file.
-        setGradleGoogleApiVersion(googleApiVersion);
+        setGradleGoogleApiVersion(plugin.variable.pop().$.value);
         break;
       }
     }
@@ -33,30 +28,17 @@ fs.readFile(configFilePath, function(err, data) {
 });
 
 /**
-* Replace gradle variable GOOGLE_API_VERSION with value fetched from cordova config.xml
+* Write properties.gradle with:
 *
-* platforms/android/cordova-google-api-version/cordova-google-api-version.gradle
-* 
-* def GOOGLE_API_VERSION = '<VERSION_READ_FROM_CONFIG.XML>'
+ext {
+  GOOGLE_API_VERSION = '<VERSION>'
+}
 *
 */
 function setGradleGoogleApiVersion(version) {
   console.log(PLUGIN_NAME, " GOOGLE_API_VERSION: ", version);
-  // The plugin *should* have just one .gradle file in android/PLUGIN_NAME/
-  glob(GRADLE_FILENAME, function (er, files) {
-    var filename = files.pop();
-    fs.readFile(filename, 'utf8', function (err,data) {
-      if (err) {
-        return console.log(PLUGIN_NAME, " ERROR: ", err);
-      }
-      // Replace the gradle variable def GOOGLE_API_VERSION = '<VERSION>'
-
-      var result = data.replace(/def\s+GOOGLE_API_VERSION\s+=.*/, "def GOOGLE_API_VERSION = '" + version + "'");      
-
-      fs.writeFile(filename, result, 'utf8', function (err) {
-         if (err) return console.log(PLUGIN_NAME, " FAILED TO SET GOOGLE_API_VERSION: ", err);
-      });
-    });
+  fs.writeFile(GRADLE_FILENAME, PROPERTIES_TEMPLATE.replace(/<VERSION>/, version), 'utf8', function (err) {
+     if (err) return console.log(PLUGIN_NAME, " FAILED TO WRITE ", GRADLE_FILENAME, " > ", GOOGLE_API_VERSION, err);
   });
 }
 

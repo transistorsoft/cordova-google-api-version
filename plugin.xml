@@ -11,6 +11,8 @@
     <platform name="android">
     	<hook type="before_prepare" src="scripts/before-prepare.js" />
     	<preference name="GOOGLE_API_VERSION" default="11.0.1" />
-        <framework src="cordova-google-api-version.gradle" custom="true" type="gradleReference" />
+        <framework src="cordova-google-api-version.gradle" custom="true" type="gradleReference" />        
+        <source-file src="properties.gradle" target-dir="cordova-google-api-version" />
+
     </platform>
 </plugin>

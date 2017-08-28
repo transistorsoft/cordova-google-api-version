@@ -10,6 +10,10 @@ Install the plugin providing `--variable GOOGLE_API_VERSION=<version>`
     $ cordova plugin add cordova-google-api-version --variable GOOGLE_API_VERSION=11.2.0
     
 
+# Credits
+
+Thanks to [**Dave Alden, Working Edge LTD**](https://github.com/dpa99c), for creating the initial implementation of this with his [cordova-android-play-services-gradle-release](https://github.com/dpa99c/cordova-android-play-services-gradle-release)
+
 License
 ================
 

@@ -1,31 +1,21 @@
 var fs      = require ('fs');
 var path    = require('path');
-var parser  = require('xml2js');
 
 const PLUGIN_NAME         = "cordova-google-api-version";
 const GRADLE_FILENAME     = path.resolve(process.cwd(), 'platforms', 'android', PLUGIN_NAME, 'properties.gradle');
 const PROPERTIES_TEMPLATE = 'ext {GOOGLE_API_VERSION = "<VERSION>"}'
 
-// 1. Parse cordova.xml file and fetch this plugin's <variable name="GOOGLE_API_VERSION" />
-fs.readFile(path.resolve(process.cwd(), 'config.xml'), function(err, data) {
-  var json = parser.parseString(data, function(err, result) {
-    if (err) {
-      return console.log(PLUGIN_NAME, " ERROR: ", err);
+// 1. Parse android.json file for play services version.
+const androidJson = require(`${process.cwd()}/platforms/android/android.json`) || {};
+const installedPlugins = androidJson.installed_plugins;
+if (installedPlugins) {
+    const pluginVariables = installedPlugins[PLUGIN_NAME];
+    if (pluginVariables && pluginVariables.GOOGLE_API_VERSION) {
+        setGradleGoogleApiVersion(pluginVariables.GOOGLE_API_VERSION);
+    } else {
+        console.log(PLUGIN_NAME, ' ERROR: FAILED TO FIND <variable name="GOOGLE_API_VERSION" /> in config.xml');
     }
-    var plugins = result.widget.plugin;
-    for (var n=0,len=plugins.length;n<len;n++) {
-      var plugin = plugins[n];
-      if (plugin.$.name === PLUGIN_NAME) {
-        if (!plugin.variable.length) { 
-          return console.log(PLUGIN_NAME, ' ERROR: FAILED TO FIND <variable name="GOOGLE_API_VERSION" /> in config.xml');
-        }
-        // 2.  Update .gradle file.
-        setGradleGoogleApiVersion(plugin.variable.pop().$.value);
-        break;
-      }
-    }
-  });
-});
+}
 
 /**
 * Write properties.gradle with:

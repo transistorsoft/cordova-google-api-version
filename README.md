@@ -1,3 +1,5 @@
+# !!! This Plugin is obsolete !!!
+
 cordova-google-api-version
 ======================================
 
